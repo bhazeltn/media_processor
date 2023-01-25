@@ -1,3 +1,2 @@
-config.yaml
-*.pkl
-*.json
+config/config.yaml
+data/
