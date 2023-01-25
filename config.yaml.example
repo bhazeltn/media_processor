@@ -1,0 +1,32 @@
+plex_server:
+plex_token:
+uhd_radarr_data:
+radarr_data:
+sonarr_data:
+rclone_log_file:
+radarr_url:
+uhd_radar_url:
+radarr_api:
+uhd_radarr_api:
+sickbeard_path:
+python_path: "python3"
+rclone_state:
+rclone_path: "rclone"
+tmdb_api:
+omdb_api:
+plex_movie_destination_path:
+uhd_base_path:
+movie_base_path:
+base_path:
+plex_base_path:
+threads: "12"
+remotes:
+  - 'u1:'
+  - 'u2:'
+  - 'u3:'
+  - 'u4:'
+  - 'u5:'
+  - 'u6:'
+libraries:
+  - id: 1
+    path: 
