@@ -26,7 +26,7 @@ def get_plex_data(plex):
   collections_data = []
  
   try:
-    with open("movies_data.pkl", "rb") as f:
+    with open("data/movies_data.pkl", "rb") as f:
       pkl_data = pickle.load(f)
       movies_data = pkl_data['data']
       last_updated = pkl_data['last_updated']
@@ -53,10 +53,10 @@ def get_plex_data(plex):
       collections_data.append(collection_data)
 
     # Save the updated data to the cache files
-    with open("movies_data.pkl", "wb") as f:
+    with open("data/movies_data.pkl", "wb") as f:
          pickle.dump({'data': movies_data, 'last_updated': datetime.now().timestamp()}, f)
          f.close()
-    with open("collections_data.pkl", "wb") as f:
+    with open("data/collections_data.pkl", "wb") as f:
         pickle.dump(collections_data, f)
         f.close()
 
