@@ -12,7 +12,7 @@ from plex_operations import update_plex, get_plex_data, plex_library, create_ple
 from rr_operations import remove_movie_from_radarr
 
 #Load and assign the starting variables
-with open("config.yaml", "r") as f:
+with open("config/config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 remotes = config["remotes"]
