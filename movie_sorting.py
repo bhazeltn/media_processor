@@ -4,13 +4,6 @@ from tmdbv3api import TMDb
 from tmdbv3api import Movie
 from os import path
 
-with open("movies_data.pkl", "rb") as f:
-    plex_movies_data = pickle.load(f)["data"]
-with open("collections_data.pkl", "rb") as f:
-    plex_collections_data = pickle.load(f)
-movies_df = pd.DataFrame(plex_movies_data)
-collections_df = pd.DataFrame(plex_collections_data)
-
 def get_movie_data(tmdb_id, imdb_id, tmdb_api, omdb_api):
   tmdb = TMDb()
   tmdb.api_key = tmdb_api
@@ -58,7 +51,15 @@ def get_movie_data(tmdb_id, imdb_id, tmdb_api, omdb_api):
     }
   return data
 
-def determine_movie_path(tmdb_data, plex_movies, plex_collections, base_path, plex_movie_path):
+def determine_movie_path(tmdb_data, base_path, plex_movie_path):
+  
+  with open("data/movies_data.pkl", "rb") as f:
+    plex_movies_data = pickle.load(f)["data"]
+  with open("data/collections_data.pkl", "rb") as f:
+    plex_collections_data = pickle.load(f)
+    plex_movies = pd.DataFrame(plex_movies_data)
+    plex_collections = pd.DataFrame(plex_collections_data)
+  
   def join_path(base_path, *args):
     if tmdb_data['collection']:
         return path.join(base_path, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'])

@@ -1,5 +1,5 @@
 from os import path
-import pickle
+import pickle, os
 from datetime import datetime
 from plexapi.server import PlexServer
 
@@ -22,9 +22,10 @@ def plex_path(media_path, plex_base, base_path):
   return media_path.replace(base_path, plex_base)
 
 def get_plex_data(plex):
+  print("getting plex data")
   movies_data = []
   collections_data = []
- 
+
   try:
     with open("data/movies_data.pkl", "rb") as f:
       pkl_data = pickle.load(f)
@@ -33,7 +34,8 @@ def get_plex_data(plex):
       last_updated_date = datetime.fromtimestamp(last_updated).strftime("%Y-%m-%d")
   except FileNotFoundError:
     last_updated_date = "2000-01-01"
-
+  
+  
   # Use the date in the search filter
   for library_id in range(13, 35):
     library = plex.library.sectionByID(library_id)
