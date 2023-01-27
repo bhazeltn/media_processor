@@ -1,12 +1,12 @@
 import json, shlex, subprocess
 from os import path
 
-def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, rclone_lock):
+def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, rclone_lock, log_file):
   # Load the state file
-  #with rclone_lock:
-  with open(state_file, "r") as f:
-      state = json.load(f)
-  index = state["index"]
+  with rclone_lock:
+    with open(state_file, "r") as f:
+        state = json.load(f)
+    index = state["index"]
 
   # Choose the next remote in the list
   remote = remotes[index]
@@ -20,10 +20,10 @@ def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, r
   remote_path = shlex.quote(remote_path)
 
   # Upload the file to the remote
-  #subprocess.run([{rclone_path}, "move", local_path, f"{remote}:{remote_path}"])
+  subprocess.run([{rclone_path}, "move", local_path, f"{remote}:{remote_path}", "-v", "--stats=10s", "--delete-empty-src-dirs", "--log-file", log_file])
 
   # Save the updated state
   state = {"index": index}
-  #with rclone_lock:
-  with open(state_file, "w") as f:
-      json.dump(state, f)
+  with rclone_lock:
+    with open(state_file, "w") as f:
+        json.dump(state, f)

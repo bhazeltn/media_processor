@@ -36,19 +36,17 @@ plex_base_path = config["plex_base_path"]
 uhd_base_path = config["uhd_base_path"] 
 movie_base_path = config["movie_base_path"]
 base_path = config["base_path"]
-#threads = int(config["threads"])
-threads = 1
+threads = int(config["threads"])
 libraries = config["libraries"]
 plex_base_path = config["plex_base_path"]
 
-#rclone_state_lock = threading.Lock()
-rclone_state_lock = ""
-#plex_data_lock = threading.Lock()
+rclone_state_lock = threading.Lock()
+plex_data_lock = threading.Lock()
 
 def tv_process(tv_json):
   full_path = os.path.join(base_path, tv_json["epidodepath"][1:])
   converted_path = convert(full_path, sickbeard_path, python_path)
-  upload_to_rclone(converted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock)
+  upload_to_rclone(converted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock, rclone_log_file )
   plex_media_path = plex_path(converted_path, plex_base_path, base_path)
   library_id = plex_library(plex_media_path, libraries)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
@@ -58,26 +56,23 @@ def movie_process(movie_json, isUHD):
   plex = create_plex_server(plex_server, plex_token)
   if isUHD:
     movie_process_base_path = uhd_base_path
-  #  remove_movie_from_radarr(movie_json["movieid"], uhd_radarr_url, uhd_radarr_api)
+    remove_movie_from_radarr(movie_json["movieid"], uhd_radarr_url, uhd_radarr_api)
   else:
     movie_process_base_path = movie_base_path
-  #  remove_movie_from_radarr(movie_json["movieid"], radarr_url, radarr_api)
+    remove_movie_from_radarr(movie_json["movieid"], radarr_url, radarr_api)
   full_path = os.path.join(base_path, movie_json["moviepath"][1:])
   converted_path = convert(full_path, sickbeard_path, python_path)
   movie_data = get_movie_data(movie_json["tmdbid"], movie_json["imdbid"], tmdb_api, omdb_api)
-  #with plex_data_lock:
-  get_plex_data(plex)
-  sorted_path = determine_movie_path(movie_data, movie_process_base_path, plex_base_path, converted_path, isUHD)
-  #move_movie(converted_path, sorted_path)
-  print(converted_path)
-  print(sorted_path)
+  with plex_data_lock:
+    get_plex_data(plex)
+    sorted_path = determine_movie_path(movie_data, movie_process_base_path, plex_base_path, converted_path, isUHD)
+  move_movie(converted_path, sorted_path)
   if 'unknown' in sorted_path:
     return
-  #upload_to_rclone(sorted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock)
+  upload_to_rclone(sorted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock, rclone_log_file)
   plex_media_path = plex_path(sorted_path, plex_base_path, base_path)
   plex_media_path, file_name = os.path.split(plex_media_path)
-  library_id = plex_library(plex_media_path, libraries)
-  print(library_id)
+  library_id = plex_library(plex_media_path, libraries)1
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
  
   
@@ -90,21 +85,21 @@ def main():
         with open(sonarr_data) as f:
           data = json.load(f)
           executor.submit(tv_process, data)
-        #os.remove(sonarr_data)
+        os.remove(sonarr_data)
       elif os.path.exists(radarr_data):
         with open(radarr_data) as f:
           data = json.load(f)
           executor.submit(movie_process, data, False)
-        #os.remove(radarr_data)
+        os.remove(radarr_data)
       elif os.path.exists(uhd_radarr_data):
-          with open(uhd_radarr_data) as f:
-            data = json.load(f)
-            executor.submit(movie_process, data, True)
-          #os.remove(uhd_radarr_data)
+        with open(uhd_radarr_data) as f:
+          data = json.load(f)
+          executor.submit(movie_process, data, True)
+        os.remove(uhd_radarr_data)
       else:
-          time.sleep(1)
+        time.sleep(1)
 
 with open(radarr_data) as f:
   data = json.load(f)
   
-movie_process(data, True)
+main()
