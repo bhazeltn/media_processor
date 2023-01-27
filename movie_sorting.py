@@ -87,8 +87,15 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path):
   
   if allowed_companies.intersection(production_company_set):
     return join_path(base_path, 'Marvel and DC')
-  elif 'Philippines' in [x.get('name','') for x in production_country] or 'Tagalog' in [x.get('english_name','') for x in language]:
+  
+  if 'Philippines' in [x.get('name','') for x in production_country] or 'Tagalog' in [x.get('english_name','') for x in language]:
       return join_path(base_path, 'Filipino')
+  
+  if genre[0] == "TV Movie":
+    if len(genre) > 1 and genre[1] != 'TV Movie':
+      return join_path(base_path, genre[1])
+    else:
+      return join_path(base_path, 'TV Movie')
   elif 'Horror' in genre:
       return join_path(base_path, 'Horror')
   elif 'Animation' in genre:
