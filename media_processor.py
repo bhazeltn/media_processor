@@ -98,8 +98,5 @@ def main():
         os.remove(uhd_radarr_data)
       else:
         time.sleep(1)
-
-with open(radarr_data) as f:
-  data = json.load(f)
   
 main()
