@@ -32,15 +32,17 @@ rclone_state_file = config["rclone_state"]
 rclone_path = config["rclone_path"]
 tmdb_api = config["tmdb_api"]
 omdb_api = config["omdb_api"]
-plex_movie_dest_path = config["plex_movie_destination_path"]
+plex_base_path = config["plex_base_path"]
 uhd_base_path = config["uhd_base_path"] 
 movie_base_path = config["movie_base_path"]
 base_path = config["base_path"]
-threads = int(config["threads"])
+#threads = int(config["threads"])
+threads = 1
 libraries = config["libraries"]
 plex_base_path = config["plex_base_path"]
 
-rclone_state_lock = threading.Lock()
+#rclone_state_lock = threading.Lock()
+#plex_data_lock = threading.Lock()
 
 def tv_process(tv_json):
   full_path = os.path.join(base_path, tv_json["epidodepath"][1:])
@@ -56,13 +58,14 @@ def movie_process(movie_json, isUHD):
   #  remove_movie_from_radarr(movie_json["movieid"], uhd_radarr_url, uhd_radarr_api)
   #else:
   #  remove_movie_from_radarr(movie_json["movieid"], radarr_url, radarr_api)
-  #full_path = os.path.join(base_path, movie_json["moviepath"][1:])
-  #converted_path = convert(full_path, sickbeard_path, python_path)
-  print(os.getcwd())
-  print("Hellllllo")
-  plex_data = get_plex_data(plex)
+  full_path = os.path.join(base_path, movie_json["moviepath"][1:])
+  converted_path = convert(full_path, sickbeard_path, python_path)
   movie_data = get_movie_data(movie_json["tmdbid"], movie_json["imdbid"], tmdb_api, omdb_api)
   print(movie_data)
+  #with plex_data_lock:
+  get_plex_data(plex)
+  sorted_path = determine_movie_path(movie_data, base_path, plex_base_path)
+  print(sorted_path)
 
 def main():
   with ThreadPoolExecutor(max_workers=threads) as executor:
@@ -85,4 +88,7 @@ def main():
       else:
           sleep(1)
 
-main()
+with open(radarr_data) as f:
+  data = json.load(f)
+  
+movie_process(data, False)

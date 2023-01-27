@@ -56,8 +56,8 @@ def get_plex_data(plex):
 
     # Save the updated data to the cache files
     with open("data/movies_data.pkl", "wb") as f:
-         pickle.dump({'data': movies_data, 'last_updated': datetime.now().timestamp()}, f)
-         f.close()
+        pickle.dump({'data': movies_data, 'last_updated': datetime.now().timestamp()}, f)
+        f.close()
     with open("data/collections_data.pkl", "wb") as f:
         pickle.dump(collections_data, f)
         f.close()

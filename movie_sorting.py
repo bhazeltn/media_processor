@@ -59,7 +59,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path):
     plex_collections_data = pickle.load(f)
     plex_movies = pd.DataFrame(plex_movies_data)
     plex_collections = pd.DataFrame(plex_collections_data)
-  
+
   def join_path(base_path, *args):
     if tmdb_data['collection']:
         return path.join(base_path, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'])
