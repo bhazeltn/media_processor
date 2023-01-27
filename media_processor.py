@@ -72,7 +72,7 @@ def movie_process(movie_json, isUHD):
   upload_to_rclone(sorted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock, rclone_log_file)
   plex_media_path = plex_path(sorted_path, plex_base_path, base_path)
   plex_media_path, file_name = os.path.split(plex_media_path)
-  library_id = plex_library(plex_media_path, libraries)1
+  library_id = plex_library(plex_media_path, libraries)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
  
   
