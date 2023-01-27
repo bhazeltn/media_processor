@@ -3,10 +3,10 @@ from os import path
 
 def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, rclone_lock):
   # Load the state file
-  with rclone_lock:
-    with open(state_file, "r") as f:
+  #with rclone_lock:
+  with open(state_file, "r") as f:
       state = json.load(f)
-    index = state["index"]
+  index = state["index"]
 
   # Choose the next remote in the list
   remote = remotes[index]
@@ -24,6 +24,6 @@ def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, r
 
   # Save the updated state
   state = {"index": index}
-  with rclone_lock:
-    with open(state_file, "w") as f:
+  #with rclone_lock:
+  with open(state_file, "w") as f:
       json.dump(state, f)

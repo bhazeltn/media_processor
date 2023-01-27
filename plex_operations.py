@@ -19,6 +19,8 @@ def plex_library(media_path, libraries):
   return None
 
 def plex_path(media_path, plex_base, base_path):
+  if "4K Sorted" in media_path:
+    media_path = media_path.replace("4K Sorted", "Sorted Movies")
   return media_path.replace(base_path, plex_base)
 
 def get_plex_data(plex):

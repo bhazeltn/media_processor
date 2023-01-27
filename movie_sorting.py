@@ -51,7 +51,24 @@ def get_movie_data(tmdb_id, imdb_id, tmdb_api, omdb_api):
     }
   return data
 
-def determine_movie_path(tmdb_data, base_path, plex_movie_path):
+def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, isUHD):
+  cur_path, file_name = path.split(current_path)
+
+  def join_path(base_path, *args):
+    if tmdb_data['collection']:
+        return path.join(base_path, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'], file_name)
+    else:
+        return path.join(base_path, *args, tmdb_data['movie_name'], file_name)
+  
+  genre = tmdb_data.get('genres', [])
+  
+  if not genre:
+    print("No genre found")
+    if isUHD:
+      return join_path(base_path, 'uhd_unknown')
+    else:
+      return join_path(base_path, 'movie_unknown')
+  
   
   with open("data/movies_data.pkl", "rb") as f:
     plex_movies_data = pickle.load(f)["data"]
@@ -60,16 +77,9 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path):
     plex_movies = pd.DataFrame(plex_movies_data)
     plex_collections = pd.DataFrame(plex_collections_data)
 
-  def join_path(base_path, *args):
-    if tmdb_data['collection']:
-        return path.join(base_path, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'])
-    else:
-        return path.join(base_path, *args, tmdb_data['movie_name'])
-  
   production_company = tmdb_data.get('production_companies', '')
   production_country = tmdb_data.get('production_countries', '')
   language = tmdb_data.get('spoken_languages', '')
-  genre = tmdb_data.get('genres', '')
   
   production_company_set = set(production_company)
   allowed_companies = {'Marvel Studios', 'DC Films', 'DC Studios'}
@@ -104,10 +114,8 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path):
       return join_path(base_path, 'SciFi')
   elif 'Comedy' in genre and 'Romance' in genre:
       return join_path(base_path, 'RomCom')
-  elif genre:
-      return join_path(base_path, genre[0])
   else:
-      return join_path(base_path, 'unknown')
-    
+      return join_path(base_path, genre[0])
+     
 def move_movie(file_path, dest_path):
   shutil.move(file_path, dest_path)
