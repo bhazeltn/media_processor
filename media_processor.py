@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import yaml, threading, os, json
+import yaml, threading, os, json, time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import time, date
+from datetime import date
 
 #Now imports from this project
 from media_converting import convert
@@ -44,6 +44,7 @@ rclone_state_lock = threading.Lock()
 plex_data_lock = threading.Lock()
 
 def tv_process(tv_json):
+  print(f"Processing {tv_json['seriestitle']} Season {tv_json['season_number']} Episode {tv_json['ep_number']}")
   full_path = os.path.join(base_path, tv_json["epidodepath"][1:])
   converted_path = convert(full_path, sickbeard_path, python_path)
   upload_to_rclone(converted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock, rclone_log_file )
@@ -97,6 +98,7 @@ def main():
           executor.submit(movie_process, data, True)
         os.remove(uhd_radarr_data)
       else:
-        time.sleep(1)
+        print("No Media To Process, Sleeping")
+        time.sleep(0.5)
   
 main()
