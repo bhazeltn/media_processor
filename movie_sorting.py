@@ -4,52 +4,91 @@ from tmdbv3api import TMDb
 from tmdbv3api import Movie
 from os import path
 
-def get_movie_data(tmdb_id, imdb_id, tmdb_api, omdb_api):
-  tmdb = TMDb()
-  tmdb.api_key = tmdb_api
-  movie = Movie()
-  tmdb_data = movie.details(tmdb_id)
-  missing_data = {}
-  production_companies = [company['name'] for company in tmdb_data.production_companies]
-  if not tmdb_data.production_companies:
-    missing_data['production_companies'] = None
-  if not tmdb_data.production_countries:
-    missing_data['production_countries'] = None
-  if not tmdb_data.spoken_languages:
-    missing_data['spoken_languages'] = None
-  genres = [genre['name'] for genre in tmdb_data.genres]
-  if not tmdb_data.genres:
-    missing_data['genres'] = None
-    
-  try:
-    title = tmdb_data.original_title
-  except:
-    title = tmdb_data.title
+def get_movie_data(tmdb_id: str, imdb_id: str, tmdb_api: str, omdb_api: str) -> Dict:
+  """
+  This function retrieves information about a movie including its title, release year, collection, production countries, 
+  production companies, spoken languages, and genres.
+  
+  Parameters:
+  tmdb_id (str): The TMDb movie id
+  imdb_id (str): The IMDb movie id
+  tmdb_api (str): The TMDb API key
+  omdb_api (str): The OMDb API key
+  
+  Returns:
+  Dict: A dictionary containing the movie data
+  """
+  def _get_missing_data_from_omdb(imdb_id, omdb_api):
+    """
+    Get missing movie data from OMDb
 
-  if missing_data:
+    Arguments:
+        imdb_id {str} -- IMDb identifier
+        omdb_api {str} -- API key for OMDb
+
+    Returns:
+        dict -- missing movie data in the form of a dictionary
+    """
     omdb_data = requests.get(f"http://www.omdbapi.com/?apikey={omdb_api}&i={imdb_id}").json()
-    if 'Production' in omdb_data:
-      if omdb_data['Production'] != 'N/A':
-        missing_data['production_companies'] = omdb_data["Production"].split(',')
+    missing_data = {}
+
+    if 'Production' in omdb_data and omdb_data['Production'] != 'N/A':
+      missing_data['production_companies'] = omdb_data["Production"].split(',')
     if 'Country' in omdb_data:
       missing_data['production_countries'] = omdb_data['Country'].split(',')
     if 'Language' in omdb_data:
       missing_data['spoken_languages'] = omdb_data['Language'].split(',')
     if 'Genre' in omdb_data:
       missing_data['genres'] = omdb_data['Genre'].split(',')
-   
-  #Create a dictionary to store the values of the fields you want to return
-  data = {
-        'collection': tmdb_data.belongs_to_collection.name if tmdb_data.belongs_to_collection else None,
-        'production_companies': production_companies,
-        'production_countries': tmdb_data.production_countries or missing_data.get('production_countries'),
-        'spoken_languages': tmdb_data.spoken_languages or missing_data.get('spoken_languages'),
-        'genres': genres,
-        'movie_name': f"{title} ({tmdb_data.release_date[:4]})",
-        'title': title
-        
+
+    return missing_data
+
+def _get_tmdb_data(tmdb_id, tmdb_api):
+  """
+  Queries TMDb API for movie information
+  
+  Parameters:
+  tmdb_id (str): The TMDb movie id
+  tmdb_api (str): TMDb API Key
+
+  Returns:
+  dict: TMDb movie information in the following format:
+    {
+      "collection": str,
+      "production_companies": List[str],
+      "production_countries": List[str],
+      "spoken_languages": List[str],
+      "genres": List[str],
+      "movie_name": str,
+      "title": str
     }
-  return data
+  """
+  tmdb = TMDb()
+  tmdb.api_key = tmdb_api
+  movie = Movie()
+  tmdb_data = movie.details(tmdb_id)
+  production_companies = [company['name'] for company in tmdb_data.production_companies]
+  genres = [genre['name'] for genre in tmdb_data.genres]
+  try:
+    title = tmdb_data.original_title
+  except:
+    title = tmdb_data.title
+  return {
+    'collection': tmdb_data.belongs_to_collection.name if tmdb_data.belongs_to_collection else None,
+    'production_companies': production_companies,
+    'production_countries': tmdb_data.production_countries,
+    'spoken_languages': tmdb_data.spoken_languages,
+    'genres': genres,
+    'movie_name': f"{title} ({tmdb_data.release_date[:4]})",
+    'title': title
+  }
+
+
+
+
+
+
+
 
 def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, isUHD):
   cur_path, file_name = path.split(current_path)
