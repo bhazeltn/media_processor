@@ -42,8 +42,10 @@ def upload_to_rclone(local_path, remotes, local_base, state_file, rclone_path, r
         remote_path = path.join(remote, remote_path)
         remote_path = shlex.quote(remote_path)
 
+        command = f"rclone move {local_path} {remote_path} -v --stats=5s --log-file {log_file}"
+
         # Upload the file to the remote
-        subprocess.run([rclone_path, "move", local_path, f"{remote}:{remote_path}", "-v", "--stats=10s", "--delete-empty-src-dirs", "--log-file", log_file], check=True)
+        subprocess.run(command, check=True)
 
         # Save the updated state
         state = {"index": index}
