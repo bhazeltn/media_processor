@@ -17,12 +17,6 @@ def convert(video_file, sickbeard_path, python_path):
     """
     
     print("Converting...")
-    if not os.path.isfile(video_file):
-        raise FileNotFoundError(f"{video_file} does not exist")
-    if not os.path.isfile(sickbeard_path):
-        raise FileNotFoundError(f"{sickbeard_path} does not exist")
-    if not os.path.isfile(python_path):
-        raise FileNotFoundError(f"{python_path} does not exist")
 
     base, ext = os.path.splitext(video_file)
     new_path = f"{base}.m4v"
