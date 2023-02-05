@@ -1,4 +1,4 @@
-import requests, pickle, shutil
+import requests, pickle, shutil, traceback
 import pandas as pd
 from tmdbv3api import TMDb
 from tmdbv3api import Movie
@@ -187,3 +187,17 @@ def move_movie(source_path, destination_path):
     print(f"Error: An unexpected error occurred while moving the file: {e}")
     print("Stack trace:")
     traceback.printexc()
+
+def movie_directory(isUHD, uhd_dir, movie_dir):
+  """
+  Returns the partial path that the movies will be stored in
+  
+  Parameters:
+  isUHD (bool): Determines if the movie is UHD (True) or not (False)
+  uhd_dir (str): Directory for UHD movies
+  movie_dir (str): Directory for all other movies
+
+  Returns:
+  str: The directory to store the movie in
+  """
+  return uhd_dir if isUHD else movie_dir
