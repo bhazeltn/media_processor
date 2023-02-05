@@ -78,6 +78,7 @@ def movie_process(movie_json, isUHD):
   plex_media_path, file_name = os.path.split(plex_media_path)
   library_id = plex_library(plex_media_path, libraries)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
+  print(f"{movie_json['movietitle']} has been proicessed and added to Plex")
   
  
   
