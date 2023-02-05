@@ -13,7 +13,7 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     None
     """
     # Define endpoint, header, and timeout
-    endpoint = f"{radarr_api_url}/api/movie/{movie_id}"
+    endpoint = f"{radarr_api_url}{movie_id}"
     header = {'X-api-key': api_key}
     timeout = 5  # in seconds
 
