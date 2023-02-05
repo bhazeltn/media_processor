@@ -63,4 +63,6 @@ def get_plex_data(plex):
     with open("data/collections_data.pkl", "wb") as f:
         pickle.dump(collections_data, f)
         f.close()
+        
+  print("Plex Data grabbed")
 
