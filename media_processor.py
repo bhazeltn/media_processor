@@ -7,7 +7,7 @@ from datetime import date
 #Now imports from this project
 from media_converting import convert
 from media_uploader import upload_to_rclone
-from movie_sorting import get_movie_data, determine_movie_path, move_movie
+from movie_sorting import get_movie_data, determine_movie_path, move_movie, movie_directory
 from plex_operations import update_plex, plex_library, create_plex_server, plex_path, get_plex_data
 from rr_operations import remove_movie_from_radarr
 
@@ -33,8 +33,8 @@ rclone_path = config["rclone_path"]
 tmdb_api = config["tmdb_api"]
 omdb_api = config["omdb_api"]
 plex_base_path = config["plex_base_path"]
-uhd_base_path = config["uhd_base_path"] 
-movie_base_path = config["movie_base_path"]
+uhd_dir = config["uhd_base_path"] 
+movie_dir = config["movie_base_path"]
 base_path = config["base_path"]
 threads = int(config["threads"])
 libraries = config["libraries"]
@@ -66,7 +66,7 @@ def movie_process(movie_json, isUHD):
   movie_data = get_movie_data(movie_json["tmdbid"], movie_json["imdbid"], tmdb_api, omdb_api)
   with plex_data_lock:
     get_plex_data(plex)
-    sorted_path = determine_movie_path(movie_data, movie_process_base_path, plex_base_path, converted_path, isUHD)
+    sorted_path = determine_movie_path(movie_data, movie_process_base_path, plex_base_path, converted_path, movie_directory(isUHD, uhd_dir, movie_dir))
   move_movie(converted_path, sorted_path)
   if 'unknown' in sorted_path:
     return

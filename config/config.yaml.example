@@ -15,8 +15,8 @@ rclone_path: "rclone"
 tmdb_api:
 omdb_api:
 plex_movie_destination_path:
-uhd_base_path:
-movie_base_path:
+uhd_directory:
+movie_directory:
 base_path:
 plex_base_path:
 threads: "12"

@@ -50,31 +50,49 @@ def get_movie_data(tmdb_id, imdb_id, tmdb_api, omdb_api):
     return data
 
 
-def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, isUHD):
-  cur_path, file_name = path.split(current_path)
+def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, movie_directories):
+  """Set the movie path based on various metadata criteria
 
-  def join_path(base_path, *args):
+  Args:
+  tmdb_data (dict): Data from get_movie_data()
+  base_path (str): The local path that all the media is under
+  plex_movie_path (str): The path on the plex server that all the movies are under
+  current_path (str): The current path to the movie, including filename
+  movie_directories (tup): The directory the movie is stored under [0] and the directory for the movies that cannot be classified [1]
+
+  Returns:
+  str: The path the movie should be moved to based on the sorting criteria
+  """
+  
+  cur_path, file_name = os.path.split(current_path)
+
+  def _join_path(base_path, movie_directoy, *args):
+    """Creates the movie path to be returned
+    Args:
+    
+    Returns:
+    str: The path
+    """ 
     if tmdb_data['collection']:
-        return path.join(base_path, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'], file_name)
+        return os.path.join(base_path, movie_directoy, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'], file_name)
     else:
-        return path.join(base_path, *args, tmdb_data['movie_name'], file_name)
+        return os.path.join(base_path, movie_directoy, *args, tmdb_data['movie_name'], file_name)
   
-  genre = tmdb_data.get('genres', [])
-  
-  if not genre:
-    print("No genre found")
-    if isUHD:
-      return join_path(base_path, 'uhd_unknown')
-    else:
-      return join_path(base_path, 'movie_unknown')
-  
-  
-  with open("data/movies_data.pkl", "rb") as f:
-    plex_movies_data = pickle.load(f)["data"]
-  with open("data/collections_data.pkl", "rb") as f:
-    plex_collections_data = pickle.load(f)
-    plex_movies = pd.DataFrame(plex_movies_data)
-    plex_collections = pd.DataFrame(plex_collections_data)
+  def _plex_data():
+    """Loads the plex data from the pkl files
+    Args:
+    None
+    
+    Returns:
+    tuple: movie dataframe and collections dataframe
+    """
+    with open("data/movies_data.pkl", "rb") as f:
+      plex_movies_data = pickle.load(f)["data"]
+    with open("data/collections_data.pkl", "rb") as f:
+      plex_collections_data = pickle.load(f)
+      movies = pd.DataFrame(plex_movies_data)
+      collections = pd.DataFrame(plex_collections_data)
+      return movies, collections
 
   production_company = tmdb_data.get('production_companies', '')
   production_country = tmdb_data.get('production_countries', '')
@@ -83,38 +101,46 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, is
   production_company_set = set(production_company)
   allowed_companies = {'Marvel Studios', 'DC Films', 'DC Studios'}
   
+  plex_movies, plex_collections = _plex_data()  
   
   matching_collection = plex_collections.loc[plex_collections['name'] == tmdb_data['collection']]
   if not matching_collection.empty:
     collection_path = matching_collection['path'].iloc[0]
-    return join_path(collection_path).replace(plex_movie_path, base_path)
+    return _join_path(collection_path).replace(plex_movie_path, os.path.join(base_path, movie_directories[0]))
   
   
   if tmdb_data['movie_title'] in plex_movies['title'].values:
     new_path =  plex_movies.loc[plex_movies['title'] == tmdb_data['movie_title'], 'path'].iloc[0]
-    return new_path.replace(plex_movie_path, base_path)
+    return new_path.replace(plex_movie_path, os.path.join(base_path, movie_directories[0])) 
+
+  genre = tmdb_data.get('genres', [])
+  
+  if not genre:
+    print("No genre found")
+    return _join_path(base_path, movie_directories[1])
+
   
   if allowed_companies.intersection(production_company_set):
-    return join_path(base_path, 'Marvel and DC')
+    return _join_path(base_path, 'Marvel and DC')
   
   if 'Philippines' in [x.get('name','') for x in production_country] or 'Tagalog' in [x.get('english_name','') for x in language]:
-      return join_path(base_path, 'Filipino')
+      return _join_path(base_path, movie_directories[0], 'Filipino')
   
   if genre[0] == "TV Movie":
     if len(genre) > 1 and genre[1] != 'TV Movie':
-      return join_path(base_path, genre[1])
+      return _join_path(base_path, movie_directories[0], genre[1])
     else:
-      return join_path(base_path, 'TV Movie')
+      return _join_path(base_path, movie_directories[0],'TV Movie')
   elif 'Horror' in genre:
-      return join_path(base_path, 'Horror')
+      return _join_path(base_path, movie_directories[0],'Horror')
   elif 'Animation' in genre:
-      return join_path(base_path, 'Animated')
+      return _join_path(base_path, movie_directories[0],'Animated')
   elif 'Science Fiction' in genre: 
-      return join_path(base_path, 'SciFi')
+      return _join_path(base_path, movie_directories[0],'SciFi')
   elif 'Comedy' in genre and 'Romance' in genre:
-      return join_path(base_path, 'RomCom')
+      return _join_path(base_path, movie_directories[0], 'RomCom')
   else:
-      return join_path(base_path, genre[0])
+      return _join_path(base_path, movie_directories[0], genre[0])
   
 def move_movie(source_path, destination_path):
   """Move a file from source_path to destination_path, creating the destination directory if it doesn't exist.
@@ -155,7 +181,7 @@ def move_movie(source_path, destination_path):
 
 def movie_directory(isUHD, uhd_dir, movie_dir):
   """
-  Returns the partial path that the movies will be stored in
+  Returns the partial path for the movie directories
   
   Parameters:
   isUHD (bool): Determines if the movie is UHD (True) or not (False)
@@ -163,6 +189,8 @@ def movie_directory(isUHD, uhd_dir, movie_dir):
   movie_dir (str): Directory for all other movies
 
   Returns:
-  str: The directory to store the movie in
+  tuple: The directories to store the movie in
   """
-  return uhd_dir if isUHD else movie_dir
+  movie_storage = uhd_dir if isUHD else movie_dir
+  unknown_storage = "uhd_unknown" if isUHD else "movie_unknown"
+  return movie_storage, unknown_storage
