@@ -1,6 +1,6 @@
 import requests
 
-def remove_movie_from_radarr(movie_id, api_key, radarr_api_url):
+def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     """
     Remove a movie from Radarr and add it to the exclusion list.
 

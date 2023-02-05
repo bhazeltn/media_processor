@@ -61,6 +61,7 @@ def movie_process(movie_json, isUHD):
     remove_movie_from_radarr(movie_json["movieid"], uhd_radarr_url, uhd_radarr_api)
   else:
     remove_movie_from_radarr(movie_json["movieid"], radarr_url, radarr_api)
+  print("removed from radarr")
   full_path = os.path.join(base_path, movie_json["moviepath"][1:])
   print(full_path)
   converted_path = convert(full_path, sickbeard_path, python_path)
