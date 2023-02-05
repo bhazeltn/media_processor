@@ -56,17 +56,18 @@ def movie_process(movie_json, isUHD):
   print(f"Processing {movie_json['movietitle']}")
   plex = create_plex_server(plex_server, plex_token)
   if isUHD:
-    movie_process_base_path = uhd_base_path
     remove_movie_from_radarr(movie_json["movieid"], uhd_radarr_url, uhd_radarr_api)
   else:
-    movie_process_base_path = movie_base_path
     remove_movie_from_radarr(movie_json["movieid"], radarr_url, radarr_api)
   full_path = os.path.join(base_path, movie_json["moviepath"][1:])
+  print(full_path)
   converted_path = convert(full_path, sickbeard_path, python_path)
+  print(converted_path)
   movie_data = get_movie_data(movie_json["tmdbid"], movie_json["imdbid"], tmdb_api, omdb_api)
   with plex_data_lock:
     get_plex_data(plex)
-    sorted_path = determine_movie_path(movie_data, movie_process_base_path, plex_base_path, converted_path, movie_directory(isUHD, uhd_dir, movie_dir))
+    sorted_path = determine_movie_path(movie_data, base_path, plex_base_path, converted_path, movie_directory(isUHD, uhd_dir, movie_dir))
+  print(sorted_path)
   move_movie(converted_path, sorted_path)
   if 'unknown' in sorted_path:
     return
