@@ -15,6 +15,8 @@ def convert(video_file, sickbeard_path, python_path):
         FileNotFoundError: If `video_file` does not exist.
         subprocess.CalledProcessError: If the conversion fails.
     """
+    
+    print("Converting...")
     if not os.path.isfile(video_file):
         raise FileNotFoundError(f"{video_file} does not exist")
     if not os.path.isfile(sickbeard_path):
@@ -26,6 +28,7 @@ def convert(video_file, sickbeard_path, python_path):
     new_path = f"{base}.m4v"
     video_file = shlex.quote(video_file)
     command = f"{python_path} {sickbeard_path} -i {video_file} -a"
+    print(command)
     try:
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError as e:
