@@ -98,7 +98,6 @@ def main():
           executor.submit(movie_process, data, True)
         os.remove(uhd_radarr_data)
       else:
-        print("No Media To Process, Sleeping")
         time.sleep(0.5)
   
 main()
