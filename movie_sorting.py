@@ -63,7 +63,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
   Returns:
   str: The path the movie should be moved to based on the sorting criteria
   """
-  
+  print(tmdb_data)
   cur_path, file_name = os.path.split(current_path)
 
   def _join_path(base_path, movie_directoy, *args):
@@ -92,7 +92,8 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
       plex_collections_data = pickle.load(f)
       movies = pd.DataFrame(plex_movies_data)
       collections = pd.DataFrame(plex_collections_data)
-      return movies, collections
+    print("Plex Data loaded")
+    return movies, collections
 
   production_company = tmdb_data.get('production_companies', '')
   production_country = tmdb_data.get('production_countries', '')
