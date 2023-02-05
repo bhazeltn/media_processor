@@ -43,9 +43,9 @@ def get_plex_data(plex):
     library = plex.library.sectionByID(library_id)
     for movie in library.search(filters={"addedAt>>": last_updated_date}):
       movie_data = {
-          'title': movie.title,
+          'title': f"{movie.title} ({movie.year})",
           'path': path.dirname(movie.locations[0]),
-          'addedAt': movie.addedAt
+          'addedAt': movie.addedAt,
       }
       movies_data.append(movie_data)
 

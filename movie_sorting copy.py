@@ -117,39 +117,5 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, is
   else:
       return join_path(base_path, genre[0])
      
-def move_movie(source_path, destination_path):
-    """Move a file from source_path to destination_path, creating the destination directory if it doesn't exist.
-
-    Args:
-    source_path (str): The path of the file to be moved, including the file name.
-    destination_path (str): The path where the file will be moved to, including the file name. The directory part of the path will be created if it doesn't exist.
-
-    Returns:
-    None
-    """
-    try:
-        # Ensure the destination directory exists
-        print(f"Making directory: {os.path.dirname(destination_path)}")
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
-        print(f"Directory made: {os.path.dirname(destination_path)}")
-    except FileNotFoundError as e:
-        print(f"Error: The parent directory of {destination_path} does not exist")
-    except PermissionError as e:
-        print(f"Error: You do not have permission to create the directory {os.path.dirname(destination_path)}")
-    except Exception as e:
-        print(f"Error: An unexpected error occurred while creating the directory: {e}")
-        return
-    try:
-        # Move the file to the destination directory
-        print(f"Moving file {source_path} to {destination_path}")
-        r = shutil.move(source_path, destination_path)
-        print(r)
-        print(f"File moved: {source_path}")
-    except FileNotFoundError as e:
-        print(f"Error: The file {source_path} does not exist")
-    except PermissionError as e:
-        print(f"Error: You do not have permission to move the file {source_path}")
-    except Exception as e:
-        print(f"Error: An unexpected error occurred while moving the file: {e}")
-        print("Stack trace:")
-        traceback.printexc()
+def move_movie(file_path, dest_path):
+  shutil.move(file_path, dest_path)
