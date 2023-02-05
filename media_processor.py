@@ -50,6 +50,7 @@ def tv_process(tv_json):
   upload_to_rclone(converted_path, remotes, base_path, rclone_state_file, rclone_path, rclone_state_lock, rclone_log_file )
   plex_media_path = plex_path(converted_path, plex_base_path, base_path)
   library_id = plex_library(plex_media_path, libraries)
+  plex_media_path, file_name = os.path.split(plex_media_path)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
   
 def movie_process(movie_json, isUHD):
