@@ -52,6 +52,7 @@ def tv_process(tv_json):
   library_id = plex_library(plex_media_path, libraries)
   plex_media_path, file_name = os.path.split(plex_media_path)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
+  print(f"{tv_json['seriestitle']} Season {tv_json['season_number']} Episode {tv_json['ep_number']} Has been processed and added to Plex")
   
 def movie_process(movie_json, isUHD):
   print(f"Processing {movie_json['movietitle']}")
@@ -77,6 +78,7 @@ def movie_process(movie_json, isUHD):
   plex_media_path, file_name = os.path.split(plex_media_path)
   library_id = plex_library(plex_media_path, libraries)
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
+  
  
   
   
