@@ -113,19 +113,26 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
   if tmdb_data['movie_title'] in plex_movies['title'].values:
     new_path =  plex_movies.loc[plex_movies['title'] == tmdb_data['movie_title'], 'path'].iloc[0]
     return new_path.replace(plex_movie_path, os.path.join(base_path, movie_directories[0])) 
-
+  
+  print("Compared to Plex, no match")
+  
   genre = tmdb_data.get('genres', [])
   
   if not genre:
     print("No genre found")
     return _join_path(base_path, movie_directories[1])
 
+  print("movie has a genre")
   
   if allowed_companies.intersection(production_company_set):
     return _join_path(base_path, 'Marvel and DC')
   
+  print("is not marvel or dc")
+  
   if 'Philippines' in [x.get('name','') for x in production_country] or 'Tagalog' in [x.get('english_name','') for x in language]:
       return _join_path(base_path, movie_directories[0], 'Filipino')
+  
+  print ("is not filipino")
   
   if genre[0] == "TV Movie":
     if len(genre) > 1 and genre[1] != 'TV Movie':
