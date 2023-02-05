@@ -53,7 +53,7 @@ def tv_process(tv_json):
   update_plex(library_id, plex_media_path, create_plex_server(plex_server, plex_token))
   
 def movie_process(movie_json, isUHD):
-  
+  print(f"Processing {movie_json['movietitle']}")
   plex = create_plex_server(plex_server, plex_token)
   if isUHD:
     movie_process_base_path = uhd_base_path
