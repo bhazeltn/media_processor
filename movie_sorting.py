@@ -105,6 +105,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
   print("Plex Data loaded")
   
   matching_collection = plex_collections.loc[plex_collections['name'] == tmdb_data['collection']]
+  print(matching_collection)
   print("Checking if collections match")
   if not matching_collection.empty:
     print("collection match")
