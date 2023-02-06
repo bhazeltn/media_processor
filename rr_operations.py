@@ -14,8 +14,9 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     None
     """
     # Connect to Radarr API
+    print("connecting to Radarr")
     radarr = RadarrAPI(radarr_api_url, api_key)
-
+    print("connected to Radarr")
     # Set timeout for the API request
     timeout = 5 # in seconds
 
