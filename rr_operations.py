@@ -18,6 +18,6 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     print("connected to radarr")
     # Remove movie from Radarr and add to exclusion list
     try:
-        radarr.movie.remove(movie_id, add_import_exclusion=True, delete_files=False)
+        radarr.movie.remove(movie_id, add_exclusion=True, delete_files=False)
     except Radarr.exceptions.RadarrError as error:
         print(f"Error: {error}")
