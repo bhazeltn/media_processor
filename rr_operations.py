@@ -1,4 +1,4 @@
-import pyarr
+from pyarr import RadarrAPI as Radarr
 
 def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     """
@@ -13,10 +13,11 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     None
     """
     # Connect to Radarr API
-    radarr = pyarr.Radarr(radarr_api_url, api_key)
-
+    print("connecting to Radarr")
+    radarr = Radarr(radarr_api_url, api_key)
+    print("connected to radarr")
     # Remove movie from Radarr and add to exclusion list
     try:
         radarr.movie.remove(movie_id, add_import_exclusion=True, delete_files=False)
-    except pyarr.exceptions.RadarrError as error:
+    except Radarr.exceptions.RadarrError as error:
         print(f"Error: {error}")
