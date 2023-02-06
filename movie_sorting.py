@@ -92,7 +92,6 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
       plex_collections_data = pickle.load(f)
       movies = pd.DataFrame(plex_movies_data)
       collections = pd.DataFrame(plex_collections_data)
-    print("Plex Data loaded")
     return movies, collections
 
   production_company = tmdb_data.get('production_companies', '')
@@ -102,7 +101,8 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
   production_company_set = set(production_company)
   allowed_companies = {'Marvel Studios', 'DC Films', 'DC Studios'}
   
-  plex_movies, plex_collections = _plex_data()  
+  plex_movies, plex_collections = _plex_data()
+  print("Plex Data loaded")
   
   matching_collection = plex_collections.loc[plex_collections['name'] == tmdb_data['collection']]
   if not matching_collection.empty:
