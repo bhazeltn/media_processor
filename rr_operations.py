@@ -19,5 +19,6 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     # Remove movie from Radarr and add to exclusion list
     try:
         radarr.del_movie(movie_id, add_exclusion=True, delete_files=False)
-    except Radarr.exceptions.RadarrError as error:
+        print("it worked")
+    except radarr.exceptions.RadarrError as error:
         print(f"Error: {error}")
