@@ -90,8 +90,8 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
       plex_movies_data = pickle.load(f)["data"]
     with open("data/collections_data.pkl", "rb") as f:
       plex_collections_data = pickle.load(f)
-      movies = pd.DataFrame(plex_movies_data)
-      collections = pd.DataFrame(plex_collections_data)
+    movies = pd.DataFrame(plex_movies_data)
+    collections = pd.DataFrame(plex_collections_data)
     return movies, collections
 
   production_company = tmdb_data.get('production_companies', '')
