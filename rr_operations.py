@@ -1,4 +1,5 @@
 from pyarr import RadarrAPI as Radarr
+import requests
 
 def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     """
@@ -13,12 +14,13 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     None
     """
     # Connect to Radarr API
-    print("connecting to Radarr")
-    radarr = Radarr(radarr_api_url, api_key)
-    print("connected to radarr")
+    radarr = RadarrAPI(radarr_api_url, api_key)
+
+    # Set timeout for the API request
+    timeout = 5 # in seconds
+
     # Remove movie from Radarr and add to exclusion list
     try:
-        radarr.del_movie(movie_id, add_exclusion=True, delete_files=False)
-        print("it worked")
-    except radarr.exceptions.RadarrError as error:
-        print(f"Error: {error}")
+        radarr.del_movie(movie_id, delete_files=False, add_exclusion=True)
+    except requests.exceptions.Timeout as error:
+        print(f"Request Timeout: The API endpoint did not respond within {timeout} seconds.")
