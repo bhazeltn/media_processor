@@ -19,7 +19,7 @@ def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
     print("connected to Radarr")
     # Set timeout for the API request
     timeout = 5 # in seconds
-
+  
     # Remove movie from Radarr and add to exclusion list
     try:
         radarr.del_movie(movie_id, delete_files=False, add_exclusion=True)
