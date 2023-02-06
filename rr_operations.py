@@ -1,4 +1,4 @@
-from pyarr import RadarrAPI as Radarr
+from pyarr import RadarrAPI
 import requests
 
 def remove_movie_from_radarr(movie_id, radarr_api_url, api_key):
