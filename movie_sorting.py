@@ -73,6 +73,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
     Returns:
     str: The path
     """ 
+    print("trying to create the path")
     if tmdb_data['collection']:
         return os.path.join(base_path, movie_directoy, *args, tmdb_data['collection'] or '', tmdb_data['movie_name'], file_name)
     else:
