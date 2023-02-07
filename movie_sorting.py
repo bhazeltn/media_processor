@@ -120,7 +120,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
   #   return new_path.replace(plex_movie_path, os.path.join(base_path, movie_directories[0])) 
   
   # print("Compared to Plex, no match")
-  
+  print("Checking Genre's")
   genre = tmdb_data.get('genres', [])
   
   if not genre:
