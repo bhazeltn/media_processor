@@ -114,7 +114,7 @@ def determine_movie_path(tmdb_data, base_path, plex_movie_path, current_path, mo
     return _join_path(collection_path).replace(plex_movie_path, os.path.join(base_path, movie_directories[0]))
   
   print("checking if exists on plex")
-  if tmdb_data['movie_title'] in plex_movies['title'].values:
+  if tmdb_data['movie_title'].isin(plex_movies['title'].values).any():
     print("exists on plex")
     new_path =  plex_movies.loc[plex_movies['title'] == tmdb_data['movie_title'], 'path'].iloc[0]
     return new_path.replace(plex_movie_path, os.path.join(base_path, movie_directories[0])) 
